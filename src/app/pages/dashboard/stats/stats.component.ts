@@ -1,10 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Subject, takeUntil, forkJoin } from 'rxjs';
-import { PrenotazioneService } from '@core/services/prenotazione.service';
-import { AuthService } from '@core/auth/auth.service';
-import { AdminService } from '@core/services/admin.service';
-import { Prenotazione } from '@core/models/prenotazione.model';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Subject, takeUntil, forkJoin } from "rxjs";
+import { PrenotazioneService } from "@core/services/prenotazione.service";
+import { AuthService } from "@core/auth/auth.service";
+import { AdminService } from "@core/services/admin.service";
+import { Prenotazione } from "@core/models/prenotazione.model";
 
 interface StatsData {
   totalBookings: number;
@@ -23,29 +28,30 @@ interface StatsData {
 }
 
 @Component({
-  selector: 'app-stats',
+  selector: "app-stats",
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './stats.component.html',
-  styleUrls: ['./stats.component.css']
+  templateUrl: "./stats.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ["./stats.component.css"],
 })
 export class StatsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
+
   stats: StatsData = {
     totalBookings: 0,
     todayBookings: 0,
     weekBookings: 0,
     monthBookings: 0,
-    mostPopularRoom: '',
-    mostPopularTimeSlot: '',
+    mostPopularRoom: "",
+    mostPopularTimeSlot: "",
     avgBookingDuration: 0,
     totalUsers: 0,
     usersWithBookings: 0,
     roomUtilization: [],
     timeSlotDistribution: [],
     weeklyTrend: [],
-    monthlyTrend: []
+    monthlyTrend: [],
   };
 
   isLoading = true;
@@ -55,7 +61,7 @@ export class StatsComponent implements OnInit, OnDestroy {
   constructor(
     private prenotazioneService: PrenotazioneService,
     private authService: AuthService,
-    private adminService: AdminService
+    private adminService: AdminService,
   ) {}
 
   ngOnInit(): void {
@@ -69,10 +75,11 @@ export class StatsComponent implements OnInit, OnDestroy {
   }
 
   private checkUserRole(): void {
-    this.authService.getIdentity()
+    this.authService
+      .getIdentity()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(user => {
-        this.isAdmin = user?.authorities?.includes('ROLE_ADMIN') || false;
+      .subscribe((user) => {
+        this.isAdmin = user?.authorities?.includes("ROLE_ADMIN") || false;
       });
   }
 
@@ -82,72 +89,83 @@ export class StatsComponent implements OnInit, OnDestroy {
     } else {
       this.isLoading = true;
     }
-    
+
     // Fetch both bookings and users data (admin-only page)
     forkJoin({
       prenotazioni: this.prenotazioneService.getPrenotazioni(),
-      users: this.adminService.getAllUsers()
+      users: this.adminService.getAllUsers(),
     })
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: ({ prenotazioni, users }) => {
-        this.calculateStats(prenotazioni, users.length);
-        if (isRefresh) {
-          this.isRefreshing = false;
-        } else {
-          this.isLoading = false;
-        }
-      },
-      error: (error) => {
-        console.error('Error loading stats:', error);
-        if (isRefresh) {
-          this.isRefreshing = false;
-        } else {
-          this.isLoading = false;
-        }
-      }
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ prenotazioni, users }) => {
+          this.calculateStats(prenotazioni, users.length);
+          if (isRefresh) {
+            this.isRefreshing = false;
+          } else {
+            this.isLoading = false;
+          }
+        },
+        error: (error) => {
+          console.error("Error loading stats:", error);
+          if (isRefresh) {
+            this.isRefreshing = false;
+          } else {
+            this.isLoading = false;
+          }
+        },
+      });
   }
 
-  private calculateStats(prenotazioni: Prenotazione[], totalUsersCount: number): void {
+  private calculateStats(
+    prenotazioni: Prenotazione[],
+    totalUsersCount: number,
+  ): void {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
     const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     // Parse dates properly
-    const parsedPrenotazioni = prenotazioni.map(p => ({
+    const parsedPrenotazioni = prenotazioni.map((p) => ({
       ...p,
       data_inizio: this.parseDate(p.data_inizio),
-      data_fine: this.parseDate(p.data_fine)
+      data_fine: this.parseDate(p.data_fine),
     }));
 
     // Basic counts
     this.stats.totalBookings = parsedPrenotazioni.length;
-    this.stats.todayBookings = parsedPrenotazioni.filter(p => 
-      p.data_inizio >= today && p.data_inizio < new Date(today.getTime() + 24 * 60 * 60 * 1000)
+    this.stats.todayBookings = parsedPrenotazioni.filter(
+      (p) =>
+        p.data_inizio >= today &&
+        p.data_inizio < new Date(today.getTime() + 24 * 60 * 60 * 1000),
     ).length;
-    this.stats.weekBookings = parsedPrenotazioni.filter(p => p.data_inizio >= weekAgo).length;
-    this.stats.monthBookings = parsedPrenotazioni.filter(p => p.data_inizio >= monthAgo).length;
+    this.stats.weekBookings = parsedPrenotazioni.filter(
+      (p) => p.data_inizio >= weekAgo,
+    ).length;
+    this.stats.monthBookings = parsedPrenotazioni.filter(
+      (p) => p.data_inizio >= monthAgo,
+    ).length;
 
     // Users with bookings count
-    const uniqueUsers = new Set(parsedPrenotazioni.map(p => p.users?.id_user));
+    const uniqueUsers = new Set(
+      parsedPrenotazioni.map((p) => p.users?.id_user),
+    );
     this.stats.usersWithBookings = uniqueUsers.size;
-    
+
     // Total users count
     this.stats.totalUsers = totalUsersCount;
 
     // Most popular room
     const roomCounts = new Map<string, number>();
-    parsedPrenotazioni.forEach(p => {
-      const roomName = p.stanze?.nome || 'N/A';
+    parsedPrenotazioni.forEach((p) => {
+      const roomName = p.stanze?.nome || "N/A";
       roomCounts.set(roomName, (roomCounts.get(roomName) || 0) + 1);
     });
     this.stats.mostPopularRoom = this.getMostPopular(roomCounts);
 
     // Most popular time slot
     const timeSlotCounts = new Map<string, number>();
-    parsedPrenotazioni.forEach(p => {
+    parsedPrenotazioni.forEach((p) => {
       const timeSlot = this.getTimeSlot(p.data_inizio);
       timeSlotCounts.set(timeSlot, (timeSlotCounts.get(timeSlot) || 0) + 1);
     });
@@ -155,16 +173,18 @@ export class StatsComponent implements OnInit, OnDestroy {
 
     // Average booking duration (in hours)
     const totalDuration = parsedPrenotazioni.reduce((sum, p) => {
-      const duration = (p.data_fine.getTime() - p.data_inizio.getTime()) / (1000 * 60 * 60);
+      const duration =
+        (p.data_fine.getTime() - p.data_inizio.getTime()) / (1000 * 60 * 60);
       return sum + duration;
     }, 0);
-    this.stats.avgBookingDuration = totalDuration / parsedPrenotazioni.length || 0;
+    this.stats.avgBookingDuration =
+      totalDuration / parsedPrenotazioni.length || 0;
 
     // Room utilization (top 5)
     this.stats.roomUtilization = Array.from(roomCounts.entries())
       .map(([room, count]) => ({
         roomName: room,
-        percentage: Math.round((count / this.stats.totalBookings) * 100)
+        percentage: Math.round((count / this.stats.totalBookings) * 100),
       }))
       .sort((a, b) => b.percentage - a.percentage)
       .slice(0, 5);
@@ -185,92 +205,122 @@ export class StatsComponent implements OnInit, OnDestroy {
     if (dateValue instanceof Date) {
       return dateValue;
     }
-    
+
     if (Array.isArray(dateValue)) {
       const [year, month, day, hours, minutes] = dateValue;
       return new Date(year, month - 1, day, hours, minutes);
     }
-    
-    if (typeof dateValue === 'string') {
-      if (dateValue.includes(',')) {
-        const [year, month, day, hours, minutes] = dateValue.split(',').map(Number);
+
+    if (typeof dateValue === "string") {
+      if (dateValue.includes(",")) {
+        const [year, month, day, hours, minutes] = dateValue
+          .split(",")
+          .map(Number);
         return new Date(year, month - 1, day, hours, minutes);
       }
       return new Date(dateValue);
     }
-    
+
     return new Date();
   }
 
   private getTimeSlot(date: Date): string {
     const hour = date.getHours();
-    return `${hour.toString().padStart(2, '0')}:00 - ${(hour + 1).toString().padStart(2, '0')}:00`;
+    return `${hour.toString().padStart(2, "0")}:00 - ${(hour + 1).toString().padStart(2, "0")}:00`;
   }
 
   private getMostPopular(counts: Map<string, number>): string {
-    if (counts.size === 0) return 'N/A';
-    
+    if (counts.size === 0) return "N/A";
+
     let maxCount = 0;
-    let mostPopular = '';
-    
+    let mostPopular = "";
+
     counts.forEach((count, item) => {
       if (count > maxCount) {
         maxCount = count;
         mostPopular = item;
       }
     });
-    
+
     return mostPopular;
   }
 
-  private calculateWeeklyTrend(prenotazioni: Prenotazione[]): { day: string; count: number }[] {
-    const days = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
-    const trend = days.map(day => ({ day, count: 0 }));
-    
+  private calculateWeeklyTrend(
+    prenotazioni: Prenotazione[],
+  ): { day: string; count: number }[] {
+    const days = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
+    const trend = days.map((day) => ({ day, count: 0 }));
+
     const today = new Date();
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
       const dayIndex = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
-      const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const dayStart = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+      );
       const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
-      
-      const count = prenotazioni.filter(p => 
-        p.data_inizio >= dayStart && p.data_inizio < dayEnd
+
+      const count = prenotazioni.filter(
+        (p) => p.data_inizio >= dayStart && p.data_inizio < dayEnd,
       ).length;
-      
+
       trend[dayIndex].count = count;
     }
-    
+
     // Reorder the array to start from Monday
     const reorderedTrend = [
       ...trend.slice(1), // Monday to Saturday
-      trend[0] // Sunday
+      trend[0], // Sunday
     ];
-    
+
     return reorderedTrend;
   }
 
-  private calculateMonthlyTrend(prenotazioni: Prenotazione[]): { month: string; count: number }[] {
-    const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+  private calculateMonthlyTrend(
+    prenotazioni: Prenotazione[],
+  ): { month: string; count: number }[] {
+    const months = [
+      "Gen",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Mag",
+      "Giu",
+      "Lug",
+      "Ago",
+      "Set",
+      "Ott",
+      "Nov",
+      "Dic",
+    ];
     const trend = [];
-    
+
     const today = new Date();
     for (let i = 5; i >= 0; i--) {
       const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
       const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59); // End of the month
-      
-      const count = prenotazioni.filter(p => {
+      const monthEnd = new Date(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        0,
+        23,
+        59,
+        59,
+      ); // End of the month
+
+      const count = prenotazioni.filter((p) => {
         const bookingDate = this.parseDate(p.data_inizio);
         return bookingDate >= monthStart && bookingDate <= monthEnd;
       }).length;
-      
+
       trend.push({
         month: months[date.getMonth()],
-        count
+        count,
       });
     }
-    
+
     return trend;
   }
 
@@ -280,26 +330,30 @@ export class StatsComponent implements OnInit, OnDestroy {
 
   // Helper methods for template calculations
   getWeeklyTrendHeight(count: number): number {
-    if (!this.stats.weeklyTrend || this.stats.weeklyTrend.length === 0) return 0;
-    const maxCount = Math.max(...this.stats.weeklyTrend.map(d => d.count));
+    if (!this.stats.weeklyTrend || this.stats.weeklyTrend.length === 0)
+      return 0;
+    const maxCount = Math.max(...this.stats.weeklyTrend.map((d) => d.count));
     if (maxCount === 0) return 0;
     if (count === 0) return 0;
     const perc = Math.max((count / maxCount) * 100, 20);
-    console.log('[DEBUG] Weekly bar height for count', count, 'is', perc);
+    console.log("[DEBUG] Weekly bar height for count", count, "is", perc);
     return perc;
   }
 
   getMonthlyTrendHeight(count: number): number {
-    if (!this.stats.monthlyTrend || this.stats.monthlyTrend.length === 0) return 0;
-    const maxCount = Math.max(...this.stats.monthlyTrend.map(m => m.count));
+    if (!this.stats.monthlyTrend || this.stats.monthlyTrend.length === 0)
+      return 0;
+    const maxCount = Math.max(...this.stats.monthlyTrend.map((m) => m.count));
     if (maxCount === 0) return 0;
     if (count === 0) return 0;
     const perc = Math.max((count / maxCount) * 100, 20);
-    console.log('[DEBUG] Monthly bar height for count', count, 'is', perc);
+    console.log("[DEBUG] Monthly bar height for count", count, "is", perc);
     return perc;
   }
 
   getTodayPercentage(): number {
-    return this.stats.totalBookings > 0 ? (this.stats.todayBookings / this.stats.totalBookings) * 100 : 0;
+    return this.stats.totalBookings > 0
+      ? (this.stats.todayBookings / this.stats.totalBookings) * 100
+      : 0;
   }
-} 
+}

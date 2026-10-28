@@ -1,4 +1,9 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -15,13 +20,14 @@ import { NavigationService, NavItem } from "@core/services/navigation.service";
   selector: "app-header",
   templateUrl: "./header.component.html",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     CommonModule,
     RouterModule,
     MatButtonModule,
     MatMenuModule,
     MatIconModule,
-    LucideAngularModule
+    LucideAngularModule,
   ],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
@@ -34,7 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private loginService: LoginService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
   ) {}
 
   ngOnInit(): void {
@@ -95,8 +101,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   isRouteActive(route: string): boolean {
     const currentRoute = window.location.pathname;
-    if (route === '/dashboard/update-user') {
-      return currentRoute === '/dashboard/update-user';
+    if (route === "/dashboard/update-user") {
+      return currentRoute === "/dashboard/update-user";
     }
     return currentRoute === route;
   }
@@ -106,14 +112,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    if (item.adminOnly && !this.currentUser.authorities.includes('ROLE_ADMIN')) {
+    if (
+      item.adminOnly &&
+      !this.currentUser.authorities.includes("ROLE_ADMIN")
+    ) {
       return false;
     }
 
     return (
       !item.authorities ||
       item.authorities.some((auth) =>
-        this.currentUser?.authorities?.includes(auth)
+        this.currentUser?.authorities?.includes(auth),
       )
     );
   }

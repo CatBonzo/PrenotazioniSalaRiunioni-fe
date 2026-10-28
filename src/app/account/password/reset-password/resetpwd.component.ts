@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import {
   FormGroup,
   ReactiveFormsModule,
@@ -38,6 +38,7 @@ export function passwordMatchValidator(
     MatProgressSpinnerModule,
     MatSnackBarModule,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: "./resetpwd.component.html",
 })
 export class ResetpwdComponent implements OnInit {

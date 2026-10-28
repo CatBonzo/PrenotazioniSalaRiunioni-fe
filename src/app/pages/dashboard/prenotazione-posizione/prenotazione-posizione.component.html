@@ -17,21 +17,27 @@
           <div
             class="w-2 h-2 rounded-full"
             [ngClass]="{
-              'bg-blue-600': bookingForm.get('tipo_stanza')?.value,
+              'bg-blue-600': $safeNavigationMigration(
+                bookingForm.get('tipo_stanza')?.value
+              ),
               'bg-gray-300': !bookingForm.get('tipo_stanza')?.value,
             }"
           ></div>
           <div
             class="w-2 h-2 rounded-full"
             [ngClass]="{
-              'bg-blue-600': bookingForm.get('timeSlot')?.value,
+              'bg-blue-600': $safeNavigationMigration(
+                bookingForm.get('timeSlot')?.value
+              ),
               'bg-gray-300': !bookingForm.get('timeSlot')?.value,
             }"
           ></div>
           <div
             class="w-2 h-2 rounded-full"
             [ngClass]="{
-              'bg-blue-600': bookingForm.get('id_postazione')?.value,
+              'bg-blue-600': $safeNavigationMigration(
+                bookingForm.get('id_postazione')?.value
+              ),
               'bg-gray-300': !bookingForm.get('id_postazione')?.value,
             }"
           ></div>
@@ -738,8 +744,6 @@
 
 <p-toast
   position="top-right"
-  [showTransitionOptions]="'300ms ease-out'"
-  [hideTransitionOptions]="'250ms ease-in'"
 >
 </p-toast>
 

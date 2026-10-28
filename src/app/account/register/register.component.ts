@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 
 import {
   FormBuilder,
@@ -46,6 +46,7 @@ import { ToastService } from "../../shared/services/toast.service";
     authAnimations.shake,
     authAnimations.scaleIn,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       :host ::ng-deep .mat-mdc-raised-button {

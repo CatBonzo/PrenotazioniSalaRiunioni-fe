@@ -1,4 +1,9 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 
 import { RouterModule } from "@angular/router";
 import { HeaderComponent } from "../../layout/header/header.component";
@@ -21,6 +26,7 @@ import { Subject, takeUntil } from "rxjs";
     ButtonComponent,
   ],
   templateUrl: "./home.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   animations: [
     authAnimations.fadeIn,
     authAnimations.slideUp,

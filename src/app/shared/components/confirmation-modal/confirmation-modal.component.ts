@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { trigger, transition, style, animate } from "@angular/animations";
 
@@ -95,6 +101,7 @@ export interface ConfirmationModalData {
       </div>
     }
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [],
 })
 export class ConfirmationModalComponent {

@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, HostListener } from "@angular/core";
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  HostListener,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 
 import { RouterModule } from "@angular/router";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -32,6 +38,7 @@ const SIDEBAR_STATE_KEY = "sidebarCollapsed";
     MatTooltipModule,
     LucideAngularModule,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   animations: [
     trigger("sidebarWidth", [
       state(

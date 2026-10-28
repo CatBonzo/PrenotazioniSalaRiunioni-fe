@@ -1,5 +1,5 @@
 import { HeaderComponent } from "@/app/layout/header/header.component";
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import {
   FormBuilder,
   Validators,
@@ -37,6 +37,7 @@ import { authAnimations } from "@/app/shared/animations/auth.animations";
     authAnimations.shake,
     authAnimations.scaleIn,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: "./forgotpwd.component.html",
 })
 export class ForgotpwdComponent {

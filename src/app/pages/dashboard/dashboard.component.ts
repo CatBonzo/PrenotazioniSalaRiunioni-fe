@@ -1,4 +1,9 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { User } from "../../core/models";
 import { Subscription, interval } from "rxjs";
@@ -47,7 +52,8 @@ import { SidebarService } from "../../shared/services/sidebar.service";
     MatButtonModule,
     MatMenuModule,
     MatDividerModule,
-],
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     AuthService,
     LoginService,
@@ -74,7 +80,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // Dati per la dashboard
   notificationCount = 0;
-  
+
   // Sidebar state
   isSidebarCollapsed = false;
 
@@ -88,7 +94,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private utilsService: UtilsService,
     private dashboardService: DashboardService,
     private adminService: AdminService,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
   ) {}
 
   async ngOnInit() {
@@ -124,7 +130,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
 
     // Subscribe to sidebar state changes
-    this.sidebarService.isCollapsed$.subscribe(isCollapsed => {
+    this.sidebarService.isCollapsed$.subscribe((isCollapsed) => {
       this.isSidebarCollapsed = isCollapsed;
     });
 
@@ -192,5 +198,4 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.router.url === "/dashboard" || this.router.url === "/dashboard/"
     );
   }
-
 }

@@ -4,6 +4,7 @@ import {
   OnDestroy,
   inject,
   ChangeDetectorRef,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import {
   FormBuilder,
@@ -39,6 +40,7 @@ import { HeaderComponent } from "../layout/header/header.component";
     MatIconModule,
     HeaderComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   animations: [
     authAnimations.fadeIn,
     authAnimations.slideUp,

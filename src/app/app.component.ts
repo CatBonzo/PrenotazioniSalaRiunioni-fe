@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 
 import { OnInit } from "@angular/core";
 import { RouterOutlet, Router, NavigationEnd } from "@angular/router";
@@ -12,6 +12,7 @@ import { AuthService } from "./core/auth/auth.service";
   selector: "app-root",
   standalone: true,
   imports: [RouterOutlet, FooterComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: "./app.component.html",
 })
 export class AppComponent implements OnInit {

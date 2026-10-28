@@ -151,7 +151,9 @@
             >
           </div>
           <span class="text-sm text-gray-500 whitespace-nowrap">{{
-            getRoleDisplayName(currentUser?.authorities)
+            getRoleDisplayName(
+              $safeNavigationMigration(currentUser?.authorities)
+            )
           }}</span>
         </div>
       }

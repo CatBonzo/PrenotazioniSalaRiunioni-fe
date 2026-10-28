@@ -4,6 +4,7 @@ import {
   Input,
   type OnInit,
   Output,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 
 interface MarkerPosition {
@@ -21,6 +22,7 @@ interface MarkerPosition {
   standalone: true,
   imports: [],
   templateUrl: "./planimetria-modale.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ["./planimetria-modale.component.css"],
 })
 export class PlanimetriaModaleComponent implements OnInit {

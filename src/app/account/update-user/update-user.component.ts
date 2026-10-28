@@ -1,4 +1,9 @@
-import { Component, type OnInit, type OnDestroy } from "@angular/core";
+import {
+  Component,
+  type OnInit,
+  type OnDestroy,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 
 import {
   FormBuilder,
@@ -24,6 +29,7 @@ import { DatePipe } from "@angular/common";
   templateUrl: "./update-user.component.html",
   standalone: true,
   imports: [RouterModule, ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   animations: [
     authAnimations.fadeIn,
     authAnimations.slideUp,

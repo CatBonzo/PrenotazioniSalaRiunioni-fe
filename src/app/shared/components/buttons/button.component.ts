@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 
 import { MatButtonModule } from "@angular/material/button";
 import { MatRippleModule } from "@angular/material/core";
@@ -13,6 +19,7 @@ export type IconPosition = "left" | "right";
   selector: "app-button",
   standalone: true,
   imports: [MatButtonModule, MatRippleModule, MatIconModule, RouterModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: "./button.component.html",
 })
 export class ButtonComponent {

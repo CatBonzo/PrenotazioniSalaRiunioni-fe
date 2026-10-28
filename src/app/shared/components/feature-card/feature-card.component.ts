@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -99,6 +99,7 @@ export interface FeatureCardConfig {
       </div>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   animations: [authAnimations.scaleIn],
 })
 export class FeatureCardComponent {

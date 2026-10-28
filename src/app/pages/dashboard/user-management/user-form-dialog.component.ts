@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 
 import {
   FormBuilder,
@@ -17,6 +24,7 @@ export interface DialogData {
   selector: "app-user-form-dialog",
   standalone: true,
   imports: [ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <!-- Modal Overlay -->
     <div
