@@ -43,8 +43,8 @@ import { ToastService } from '../../shared/services/toast.service';
   ],
   styles: [`
     :host ::ng-deep .mat-mdc-raised-button {
-      --mdc-filled-button-container-color: transparent;
-      --mdc-filled-button-container-shape: var(--radius-lg);
+      --mat-button-filled-container-color: transparent;
+      --mat-button-filled-container-shape: var(--radius-lg);
       box-shadow: var(--shadow-lg);
       transition: all 0.3s ease;
       height: 48px;
