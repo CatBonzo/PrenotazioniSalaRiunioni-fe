@@ -1,5 +1,11 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 
 interface CalendarDay {
   date: Date;
@@ -10,12 +16,12 @@ interface CalendarDay {
 }
 
 @Component({
-  selector: 'app-calendar',
+  selector: "app-calendar",
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [],
+  templateUrl: "./calendar.component.html",
+  styleUrls: ["./calendar.component.css"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarComponent {
   @Input() set selectedDates(dates: Date[]) {
@@ -32,7 +38,7 @@ export class CalendarComponent {
   @Output() monthChange = new EventEmitter<Date>();
 
   currentDate = new Date();
-  weekDays = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+  weekDays = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
   private _days: CalendarDay[] = [];
   private _selectedDates: Date[] = [];
 
@@ -49,26 +55,36 @@ export class CalendarComponent {
   }
 
   getMonthName(): string {
-    return this.currentDate.toLocaleString('it-IT', { month: 'long' });
+    return this.currentDate.toLocaleString("it-IT", { month: "long" });
   }
 
   isCurrentMonth(): boolean {
     const today = new Date();
-    return this.currentDate.getMonth() === today.getMonth() && 
-           this.currentDate.getFullYear() === today.getFullYear();
+    return (
+      this.currentDate.getMonth() === today.getMonth() &&
+      this.currentDate.getFullYear() === today.getFullYear()
+    );
   }
 
   previousPeriod(): void {
     if (this.isCurrentMonth()) {
       return; // Don't allow going back from current month
     }
-    this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
+    this.currentDate = new Date(
+      this.currentDate.getFullYear(),
+      this.currentDate.getMonth() - 1,
+      1,
+    );
     this.updateDays();
     this.monthChange.emit(this.currentDate);
   }
 
   nextPeriod(): void {
-    this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
+    this.currentDate = new Date(
+      this.currentDate.getFullYear(),
+      this.currentDate.getMonth() + 1,
+      1,
+    );
     this.updateDays();
     this.monthChange.emit(this.currentDate);
   }
@@ -89,7 +105,11 @@ export class CalendarComponent {
     if (firstDayOfWeek > 1) {
       const prevMonthLastDay = new Date(this.currentYear, this.currentMonth, 0);
       for (let i = firstDayOfWeek - 1; i > 0; i--) {
-        const date = new Date(this.currentYear, this.currentMonth - 1, prevMonthLastDay.getDate() - i + 1);
+        const date = new Date(
+          this.currentYear,
+          this.currentMonth - 1,
+          prevMonthLastDay.getDate() - i + 1,
+        );
         days.push(this.createCalendarDay(date, today));
       }
     }
@@ -123,40 +143,44 @@ export class CalendarComponent {
       isToday: this.isSameDay(date, today),
       isWeekend,
       isSelected: this.isDateSelected(date),
-      isDisabled
+      isDisabled,
     };
   }
 
   private isSameDay(date1: Date, date2: Date): boolean {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
   }
 
   private isDateSelected(date: Date): boolean {
-    return this._selectedDates.some(selectedDate => this.isSameDay(selectedDate, date));
+    return this._selectedDates.some((selectedDate) =>
+      this.isSameDay(selectedDate, date),
+    );
   }
 
   onDateClick(day: CalendarDay): void {
     if (day.isDisabled || day.isWeekend) {
       return; // Don't allow selection of disabled dates or weekends
     }
-    
+
     const newSelectedDates = this.isDateSelected(day.date)
-      ? this._selectedDates.filter(date => !this.isSameDay(date, day.date))
+      ? this._selectedDates.filter((date) => !this.isSameDay(date, day.date))
       : [day.date];
-    
+
     // Update internal state immediately
     this._selectedDates = [...newSelectedDates]; // Create new array reference
     this.updateDays();
     this.cdr.detectChanges(); // Force change detection
-    
+
     // Emit the change
     this.dateSelectionChange.emit([...newSelectedDates]); // Emit new array reference
   }
 
   getDateTooltip(date: Date): string {
-    const dateStr = date.toISOString().split('T')[0];
-    return this.dateTooltips.get(dateStr) || '';
+    const dateStr = date.toISOString().split("T")[0];
+    return this.dateTooltips.get(dateStr) || "";
   }
 }

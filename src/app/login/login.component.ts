@@ -1,25 +1,35 @@
-import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { LoginService } from './login.service';
-import { authAnimations } from '../shared/animations/auth.animations';
-import { LucideAngularModule } from 'lucide-angular';
-import { finalize, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { HeaderComponent } from '../layout/header/header.component';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  ChangeDetectorRef,
+} from "@angular/core";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { Router } from "@angular/router";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+
+import { RouterLink } from "@angular/router";
+import { LoginService } from "./login.service";
+import { authAnimations } from "../shared/animations/auth.animations";
+import { LucideAngularModule } from "lucide-angular";
+import { finalize, takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+import { HeaderComponent } from "../layout/header/header.component";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
+  selector: "app-login",
+  templateUrl: "./login.component.html",
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -27,21 +37,21 @@ import { HeaderComponent } from '../layout/header/header.component';
     RouterLink,
     LucideAngularModule,
     MatIconModule,
-    HeaderComponent
+    HeaderComponent,
   ],
   animations: [
     authAnimations.fadeIn,
     authAnimations.slideUp,
     authAnimations.shake,
-    authAnimations.scaleIn
-  ]
+    authAnimations.scaleIn,
+  ],
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   hidePwd: boolean = true;
   isLoading: boolean = false;
   errorMessage: string | null = null;
-  iconName: string = 'eye-off';
+  iconName: string = "eye-off";
   private destroy$ = new Subject<void>();
   private preventNextErrorClear = false;
 
@@ -52,25 +62,29 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.loginForm = this.formBuilder.group({
-      email: ['', { validators: [Validators.required, Validators.email], nonNullable: true }],
-      password: ['', { validators: [Validators.required], nonNullable: true }]
+      email: [
+        "",
+        {
+          validators: [Validators.required, Validators.email],
+          nonNullable: true,
+        },
+      ],
+      password: ["", { validators: [Validators.required], nonNullable: true }],
     });
 
-    this.loginForm.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        if (this.preventNextErrorClear) {
-          this.preventNextErrorClear = false;
-          return;
-        }
-        
-        if (this.errorMessage) {
-          this.errorMessage = null;
-        }
-      });
+    this.loginForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.preventNextErrorClear) {
+        this.preventNextErrorClear = false;
+        return;
+      }
+
+      if (this.errorMessage) {
+        this.errorMessage = null;
+      }
+    });
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -82,11 +96,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.errorMessage = null;
-      
+
       // Disable form controls while loading
       this.loginForm.disable();
 
-      this.loginService.login(this.loginForm.value)
+      this.loginService
+        .login(this.loginForm.value)
         .pipe(
           takeUntil(this.destroy$),
           finalize(() => {
@@ -94,50 +109,59 @@ export class LoginComponent implements OnInit, OnDestroy {
             // Prevent error clearing when form is re-enabled programmatically
             this.preventNextErrorClear = true;
             this.loginForm.enable();
-          })
+          }),
         )
         .subscribe({
           next: (user) => {
             if (user) {
-              const returnUrl = this.router.routerState.snapshot.root.queryParams['returnUrl'] || '/dashboard';
+              const returnUrl =
+                this.router.routerState.snapshot.root.queryParams[
+                  "returnUrl"
+                ] || "/dashboard";
               this.router.navigateByUrl(returnUrl);
             }
           },
           error: (error) => {
             this.errorMessage = error.message;
-            
+
             // Force change detection
             this.cdr.detectChanges();
-            
+
             this.loginForm.markAsPristine();
-            
+
             if (error.originalError?.response?.status === 400) {
-              const emailControl = this.loginForm.get('email');
+              const emailControl = this.loginForm.get("email");
               if (emailControl) {
                 emailControl.markAsTouched();
-                const emailInput = document.getElementById('email') as HTMLInputElement;
+                const emailInput = document.getElementById(
+                  "email",
+                ) as HTMLInputElement;
                 if (emailInput) {
                   emailInput.focus();
                 }
               }
             }
-          }
+          },
         });
     }
   }
 
   togglePasswordIcon(): void {
-    this.iconName = this.iconName === 'eye' ? 'eye-off' : 'eye';
+    this.iconName = this.iconName === "eye" ? "eye-off" : "eye";
   }
 
   get emailInvalid(): boolean {
-    const control = this.loginForm.get('email');
-    return control ? (control.dirty || control.touched) && control.invalid : false;
+    const control = this.loginForm.get("email");
+    return control
+      ? (control.dirty || control.touched) && control.invalid
+      : false;
   }
 
   get passwordInvalid(): boolean {
-    const control = this.loginForm.get('password');
-    return control ? (control.dirty || control.touched) && control.invalid : false;
+    const control = this.loginForm.get("password");
+    return control
+      ? (control.dirty || control.touched) && control.invalid
+      : false;
   }
 
   dismissError(): void {

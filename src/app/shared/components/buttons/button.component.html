@@ -1,18 +1,43 @@
-<button *ngIf="!routerLink" [type]="type" [disabled]="disabled" [class]="getButtonClasses()"
-    (click)="onClick.emit($event)" matRipple [matRippleColor]="getRippleColor()" [matRippleCentered]="true"
-    [matRippleUnbounded]="false">
+@if (!routerLink) {
+  <button
+    [type]="type"
+    [disabled]="disabled"
+    [class]="getButtonClasses()"
+    (click)="onClick.emit($event)"
+    matRipple
+    [matRippleColor]="getRippleColor()"
+    [matRippleCentered]="true"
+    [matRippleUnbounded]="false"
+  >
     <span class="relative flex items-center justify-center gap-2 z-10">
-        <i *ngIf="icon && iconPosition === 'left'" [class]="getIconClasses()" [class]="icon"></i>
-        <span [class]="getTextClasses()">{{ label }}</span>
-        <i *ngIf="icon && iconPosition === 'right'" [class]="getIconClasses()" [class]="icon"></i>
+      @if (icon && iconPosition === "left") {
+        <i [class]="getIconClasses()" [class]="icon"></i>
+      }
+      <span [class]="getTextClasses()">{{ label }}</span>
+      @if (icon && iconPosition === "right") {
+        <i [class]="getIconClasses()" [class]="icon"></i>
+      }
     </span>
-</button>
+  </button>
+}
 
-<a *ngIf="routerLink" [routerLink]="routerLink" [class]="getButtonClasses()" matRipple
-    [matRippleColor]="getRippleColor()" [matRippleCentered]="true" [matRippleUnbounded]="false">
+@if (routerLink) {
+  <a
+    [routerLink]="routerLink"
+    [class]="getButtonClasses()"
+    matRipple
+    [matRippleColor]="getRippleColor()"
+    [matRippleCentered]="true"
+    [matRippleUnbounded]="false"
+  >
     <span class="relative flex items-center justify-center gap-2 z-10">
-        <i *ngIf="icon && iconPosition === 'left'" [class]="getIconClasses()" [class]="icon"></i>
-        <span [class]="getTextClasses()">{{ label }}</span>
-        <i *ngIf="icon && iconPosition === 'right'" [class]="getIconClasses()" [class]="icon"></i>
+      @if (icon && iconPosition === "left") {
+        <i [class]="getIconClasses()" [class]="icon"></i>
+      }
+      <span [class]="getTextClasses()">{{ label }}</span>
+      @if (icon && iconPosition === "right") {
+        <i [class]="getIconClasses()" [class]="icon"></i>
+      }
     </span>
-</a>
+  </a>
+}

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, HostListener } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { RouterModule } from "@angular/router";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { LucideAngularModule } from "lucide-angular";
@@ -11,16 +11,21 @@ import { AuthService } from "../../../core/auth/auth.service";
 import { LoginService } from "../../../login/login.service";
 import { NavigationService, NavItem } from "@core/services/navigation.service";
 import { SidebarService } from "../../services/sidebar.service";
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from "@angular/animations";
 
-const SIDEBAR_STATE_KEY = 'sidebarCollapsed';
+const SIDEBAR_STATE_KEY = "sidebarCollapsed";
 
 @Component({
   selector: "app-sidebar",
   templateUrl: "./sidebar.component.html",
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     MatExpansionModule,
     MatIconModule,
@@ -28,18 +33,22 @@ const SIDEBAR_STATE_KEY = 'sidebarCollapsed';
     LucideAngularModule,
   ],
   animations: [
-    trigger('sidebarWidth', [
-      state('expanded', style({
-        width: '256px'
-      })),
-      state('collapsed', style({
-        width: '72px'
-      })),
-      transition('expanded <=> collapsed', [
-        animate('200ms ease-in-out')
-      ])
-    ])
-  ]
+    trigger("sidebarWidth", [
+      state(
+        "expanded",
+        style({
+          width: "256px",
+        }),
+      ),
+      state(
+        "collapsed",
+        style({
+          width: "72px",
+        }),
+      ),
+      transition("expanded <=> collapsed", [animate("200ms ease-in-out")]),
+    ]),
+  ],
 })
 export class SidebarComponent implements OnInit, OnDestroy {
   // Stato dell'utente e dell'autenticazione
@@ -57,7 +66,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // Screen width threshold for automatic collapse (in pixels)
   private readonly COLLAPSE_WIDTH = 768;
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener("window:resize")
   onResize() {
     this.handleResponsiveSidebar();
     this.sidebarService.updateForWindowResize();
@@ -67,7 +76,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private loginService: LoginService,
     private navigationService: NavigationService,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
   ) {
     // Sync with sidebar service
     this.isCollapsed = this.sidebarService.isCollapsed;
@@ -100,7 +109,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     // Subscribe to sidebar state changes
     this.sidebarService.isCollapsed$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(isCollapsed => {
+      .subscribe((isCollapsed) => {
         this.isCollapsed = isCollapsed;
       });
 
@@ -112,7 +121,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         catchError(() => {
           this.resetAuthState();
           return [];
-        })
+        }),
       )
       .subscribe((isAuthenticated) => {
         this.isAuthenticated = isAuthenticated;
@@ -139,7 +148,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         catchError(() => {
           this.resetAuthState();
           return [];
-        })
+        }),
       )
       .subscribe((user) => {
         this.currentUser = user;
@@ -183,7 +192,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     return (
       !item.authorities ||
       item.authorities.some((auth) =>
-        this.currentUser?.authorities?.includes(auth)
+        this.currentUser?.authorities?.includes(auth),
       )
     );
   }

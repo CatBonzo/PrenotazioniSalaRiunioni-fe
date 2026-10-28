@@ -1,28 +1,33 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { RegisterService, RegisterUserData } from './register.service';
-import { LoginService } from '../../login/login.service';
-import { authAnimations } from '../../shared/animations/auth.animations';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { catchError, finalize, switchMap } from 'rxjs/operators';
-import { throwError } from 'rxjs';
-import { HeaderComponent } from '../../layout/header/header.component';
-import { ToastModule } from 'primeng/toast';
-import { ToastService } from '../../shared/services/toast.service';
+import { Component } from "@angular/core";
 
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from "@angular/forms";
+import { Router, RouterModule } from "@angular/router";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { RegisterService, RegisterUserData } from "./register.service";
+import { LoginService } from "../../login/login.service";
+import { authAnimations } from "../../shared/animations/auth.animations";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { catchError, finalize, switchMap } from "rxjs/operators";
+import { throwError } from "rxjs";
+import { HeaderComponent } from "../../layout/header/header.component";
+import { ToastModule } from "primeng/toast";
+import { ToastService } from "../../shared/services/toast.service";
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
+  selector: "app-register",
+  templateUrl: "./register.component.html",
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -34,40 +39,42 @@ import { ToastService } from '../../shared/services/toast.service';
     ToastModule,
   ],
   providers: [],
-  styleUrls: ['../../shared/styles/toast.styles.css'],
+  styleUrls: ["../../shared/styles/toast.styles.css"],
   animations: [
     authAnimations.fadeIn,
     authAnimations.slideUp,
     authAnimations.shake,
-    authAnimations.scaleIn
+    authAnimations.scaleIn,
   ],
-  styles: [`
-    :host ::ng-deep .mat-mdc-raised-button {
-      --mat-button-filled-container-color: transparent;
-      --mat-button-filled-container-shape: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      transition: all 0.3s ease;
-      height: 48px;
-      padding: 0;
-    }
+  styles: [
+    `
+      :host ::ng-deep .mat-mdc-raised-button {
+        --mat-button-filled-container-color: transparent;
+        --mat-button-filled-container-shape: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s ease;
+        height: 48px;
+        padding: 0;
+      }
 
-    :host ::ng-deep .mat-mdc-raised-button:hover {
-      box-shadow: var(--shadow-xl);
-      transform: scale(1.02);
-    }
+      :host ::ng-deep .mat-mdc-raised-button:hover {
+        box-shadow: var(--shadow-xl);
+        transform: scale(1.02);
+      }
 
-    :host ::ng-deep .mat-mdc-raised-button:disabled {
-      opacity: 0.5;
-    }
+      :host ::ng-deep .mat-mdc-raised-button:disabled {
+        opacity: 0.5;
+      }
 
-    :host ::ng-deep .mat-mdc-raised-button .mdc-button__label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-    }
-  `]
+      :host ::ng-deep .mat-mdc-raised-button .mdc-button__label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+      }
+    `,
+  ],
 })
 export class RegisterComponent {
   registerForm: FormGroup;
@@ -81,29 +88,36 @@ export class RegisterComponent {
     private loginService: LoginService,
     private toastService: ToastService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     this.registerForm = this.fb.group({
-      nome: ['', [Validators.required, Validators.minLength(2)]],
-      cognome: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(6),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{6,}$/)
-      ]],
-      confirmPassword: ['', [Validators.required]]
+      nome: ["", [Validators.required, Validators.minLength(2)]],
+      cognome: ["", [Validators.required, Validators.minLength(2)]],
+      email: ["", [Validators.required, Validators.email]],
+      password: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.pattern(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{6,}$/,
+          ),
+        ],
+      ],
+      confirmPassword: ["", [Validators.required]],
     });
 
     // Add password match validation when either password or confirmPassword changes
-    this.registerForm.get('password')?.valueChanges.subscribe(() => {
-      this.registerForm.get('confirmPassword')?.updateValueAndValidity();
+    this.registerForm.get("password")?.valueChanges.subscribe(() => {
+      this.registerForm.get("confirmPassword")?.updateValueAndValidity();
     });
 
-    this.registerForm.get('confirmPassword')?.setValidators([
-      Validators.required,
-      this.passwordMatchValidator.bind(this)
-    ]);
+    this.registerForm
+      .get("confirmPassword")
+      ?.setValidators([
+        Validators.required,
+        this.passwordMatchValidator.bind(this),
+      ]);
   }
 
   // Updated password match validator
@@ -111,65 +125,65 @@ export class RegisterComponent {
     if (!control || !this.registerForm) {
       return null;
     }
-    
-    const password = this.registerForm.get('password')?.value;
+
+    const password = this.registerForm.get("password")?.value;
     const confirmPassword = control.value;
-    
+
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
   get emailInvalid() {
-    const control = this.registerForm.get('email');
+    const control = this.registerForm.get("email");
     return control && control.invalid && (control.dirty || control.touched);
   }
 
   getEmailErrorMessage(): string {
-    const control = this.registerForm.get('email');
-    if (control?.hasError('required')) {
-      return 'L\'email è obbligatoria';
+    const control = this.registerForm.get("email");
+    if (control?.hasError("required")) {
+      return "L'email è obbligatoria";
     }
-    if (control?.hasError('email')) {
-      return 'Inserisci un indirizzo email valido';
+    if (control?.hasError("email")) {
+      return "Inserisci un indirizzo email valido";
     }
-    if (control?.hasError('emailExists')) {
-      return 'Questa email è già registrata';
+    if (control?.hasError("emailExists")) {
+      return "Questa email è già registrata";
     }
-    return '';
+    return "";
   }
 
   get passwordInvalid() {
-    const control = this.registerForm.get('password');
+    const control = this.registerForm.get("password");
     return control && control.invalid && (control.dirty || control.touched);
   }
 
   get confirmPasswordInvalid() {
-    const control = this.registerForm.get('confirmPassword');
+    const control = this.registerForm.get("confirmPassword");
     return control && control.invalid && (control.dirty || control.touched);
   }
 
   getPasswordErrorMessage(): string {
-    const control = this.registerForm.get('password');
-    if (control?.hasError('required')) {
-      return 'La password è obbligatoria';
+    const control = this.registerForm.get("password");
+    if (control?.hasError("required")) {
+      return "La password è obbligatoria";
     }
-    if (control?.hasError('minlength')) {
-      return 'La password deve contenere almeno 6 caratteri';
+    if (control?.hasError("minlength")) {
+      return "La password deve contenere almeno 6 caratteri";
     }
-    if (control?.hasError('pattern')) {
-      return 'La password deve contenere almeno una lettera maiuscola, una minuscola, un numero e un carattere speciale';
+    if (control?.hasError("pattern")) {
+      return "La password deve contenere almeno una lettera maiuscola, una minuscola, un numero e un carattere speciale";
     }
-    return '';
+    return "";
   }
 
   getConfirmPasswordErrorMessage(): string {
-    const control = this.registerForm.get('confirmPassword');
-    if (control?.hasError('required')) {
-      return 'La conferma password è obbligatoria';
+    const control = this.registerForm.get("confirmPassword");
+    if (control?.hasError("required")) {
+      return "La conferma password è obbligatoria";
     }
-    if (control?.hasError('passwordMismatch')) {
-      return 'Le password non coincidono';
+    if (control?.hasError("passwordMismatch")) {
+      return "Le password non coincidono";
     }
-    return '';
+    return "";
   }
 
   onSubmit() {
@@ -182,63 +196,75 @@ export class RegisterComponent {
         nome: formData.nome,
         cognome: formData.cognome,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       };
 
       // Register the user and then automatically log them in
-      this.registerService.register(userData)
+      this.registerService
+        .register(userData)
         .pipe(
           switchMap(() => {
             // After successful registration, automatically log the user in
             return this.loginService.login({
               email: userData.email,
-              password: userData.password
+              password: userData.password,
             });
           }),
-          catchError(error => {
-            console.error('Registration or login error:', error);
-            
+          catchError((error) => {
+            console.error("Registration or login error:", error);
+
             // Check if error is from registration or login phase
             if (error.originalError) {
               // This is likely a login error after successful registration
               this.showWarningToast(
-                'Registrazione Completata',
-                'Si è verificato un errore durante il login automatico. Puoi effettuare il login manualmente.'
+                "Registrazione Completata",
+                "Si è verificato un errore durante il login automatico. Puoi effettuare il login manualmente.",
               );
               // Navigate to login page if auto-login fails
-              this.router.navigate(['/accedi']);
-              return throwError(() => new Error('Auto-login failed'));
+              this.router.navigate(["/accedi"]);
+              return throwError(() => new Error("Auto-login failed"));
             } else {
               // This is a registration error
-              let errorMessage = 'Errore durante la registrazione. Riprova più tardi.';
-              
+              let errorMessage =
+                "Errore durante la registrazione. Riprova più tardi.";
+
               // Check for specific error cases
-              if (error.response?.status === 400 && 
-                  (error.response?.data === 'Esiste già un utente con questa email!' ||
-                   error.response?.data?.toLowerCase().includes('email già esistente') ||
-                   error.response?.data?.toLowerCase().includes('email already exists'))) {
-                errorMessage = 'Questa email è già registrata. Per favore, utilizza un\'altra email o accedi al tuo account esistente.';
-                this.registerForm.get('email')?.setErrors({ emailExists: true });
+              if (
+                error.response?.status === 400 &&
+                (error.response?.data ===
+                  "Esiste già un utente con questa email!" ||
+                  error.response?.data
+                    ?.toLowerCase()
+                    .includes("email già esistente") ||
+                  error.response?.data
+                    ?.toLowerCase()
+                    .includes("email already exists"))
+              ) {
+                errorMessage =
+                  "Questa email è già registrata. Per favore, utilizza un'altra email o accedi al tuo account esistente.";
+                this.registerForm
+                  .get("email")
+                  ?.setErrors({ emailExists: true });
               } else if (error.response?.data) {
                 // Use the error message from the backend if available
                 errorMessage = error.response.data;
               }
-              
-              this.showErrorToast('Errore Registrazione', errorMessage);
+
+              this.showErrorToast("Errore Registrazione", errorMessage);
               return throwError(() => new Error(errorMessage));
             }
           }),
           finalize(() => {
             this.isLoading = false;
-          })
+          }),
         )
         .subscribe({
           next: (user) => {
             if (user) {
               // Navigate to dashboard after successful auto-login
-              this.router.navigate(['/dashboard']);
+              this.router.navigate(["/dashboard"]);
             }
-          }
+          },
         });
     }
   }

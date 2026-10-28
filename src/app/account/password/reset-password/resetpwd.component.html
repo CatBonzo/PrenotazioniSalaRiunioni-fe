@@ -36,9 +36,11 @@
             hideNewPwd ? "visibility" : "visibility_off"
           }}</mat-icon>
         </button>
-        <mat-error *ngIf="resetPwdForm.get('password')?.hasError('required')">
-          <strong>Password richiesta</strong>
-        </mat-error>
+        @if (resetPwdForm.get("password")?.hasError("required")) {
+          <mat-error>
+            <strong>Password richiesta</strong>
+          </mat-error>
+        }
       </mat-form-field>
 
       <!-- Conferma Password -->
@@ -50,14 +52,14 @@
           formControlName="confirmPassword"
           placeholder="Ripeti la nuova password"
         />
-        <mat-error
-          *ngIf="resetPwdForm.get('confirmPassword')?.hasError('required')"
-        >
-          <strong>Conferma password richiesta</strong>
-        </mat-error>
-        <mat-error *ngIf="resetPwdForm.hasError('passwordMismatch')">
-          Le password non coincidono
-        </mat-error>
+        @if (resetPwdForm.get("confirmPassword")?.hasError("required")) {
+          <mat-error>
+            <strong>Conferma password richiesta</strong>
+          </mat-error>
+        }
+        @if (resetPwdForm.hasError("passwordMismatch")) {
+          <mat-error> Le password non coincidono </mat-error>
+        }
       </mat-form-field>
 
       <button
@@ -65,7 +67,9 @@
         type="submit"
         [disabled]="resetPwdForm.invalid || isLoading"
       >
-        <span *ngIf="!isLoading">Cambia Password</span>
+        @if (!isLoading) {
+          <span>Cambia Password</span>
+        }
       </button>
     </form>
   </div>

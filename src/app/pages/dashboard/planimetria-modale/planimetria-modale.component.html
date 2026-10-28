@@ -11,23 +11,35 @@
 
   <div class="fullscreen-content">
     <div class="planimetria-container">
-      <img src="Planimetria.png" alt="Planimetria" crossOrigin="anonymous" class="planimetria-img">
-      
-      <div *ngFor="let marker of markers" 
-           class="floor-plan-marker"
-           [class.available]="marker.available"
-           [class.unavailable]="!marker.available"
-           [class.selected]="marker.selected"
-           [style.left.%]="marker.x"
-           [style.top.%]="marker.y"
-           (click)="selezionaMarker(marker)">
-        <span class="marker-label">{{ marker.label }}</span>
-        <div class="marker-tooltip">
-          {{ marker.tooltip }}
-          <span *ngIf="marker.available" class="tooltip-status available">Disponibile</span>
-          <span *ngIf="!marker.available" class="tooltip-status unavailable">Non disponibile</span>
+      <img
+        src="Planimetria.png"
+        alt="Planimetria"
+        crossOrigin="anonymous"
+        class="planimetria-img"
+      />
+
+      @for (marker of markers; track marker) {
+        <div
+          class="floor-plan-marker"
+          [class.available]="marker.available"
+          [class.unavailable]="!marker.available"
+          [class.selected]="marker.selected"
+          [style.left.%]="marker.x"
+          [style.top.%]="marker.y"
+          (click)="selezionaMarker(marker)"
+        >
+          <span class="marker-label">{{ marker.label }}</span>
+          <div class="marker-tooltip">
+            {{ marker.tooltip }}
+            @if (marker.available) {
+              <span class="tooltip-status available">Disponibile</span>
+            }
+            @if (!marker.available) {
+              <span class="tooltip-status unavailable">Non disponibile</span>
+            }
+          </div>
         </div>
-      </div>
+      }
     </div>
   </div>
 

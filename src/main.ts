@@ -1,7 +1,11 @@
 import { bootstrapApplication } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { provideRouter } from "@angular/router";
-import { importProvidersFrom, LOCALE_ID } from "@angular/core";
+import {
+  importProvidersFrom,
+  LOCALE_ID,
+  provideZoneChangeDetection,
+} from "@angular/core";
 import { registerLocaleData } from "@angular/common";
 import localeIt from "@angular/common/locales/it";
 import { AppComponent } from "./app/app.component";
@@ -45,7 +49,7 @@ import {
   Shield,
   ChartBar,
   LayoutDashboard,
-  X
+  X,
 } from "lucide-angular";
 import { routes } from "./app/app.routes";
 import { provideHttpClient } from "@angular/common/http";
@@ -61,6 +65,7 @@ registerLocaleData(localeIt);
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideZoneChangeDetection(),
     provideRouter(routes), // Usa la configurazione delle rotte
     provideAnimations(),
     provideHttpClient(),
@@ -104,14 +109,14 @@ bootstrapApplication(AppComponent, {
         Shield,
         ChartBar,
         LayoutDashboard,
-        X
-      })
+        X,
+      }),
     ),
     AxiosService,
     UserService,
     AuthService,
     CalendarService,
     MessageService,
-    { provide: LOCALE_ID, useValue: 'it-IT' }
+    { provide: LOCALE_ID, useValue: "it-IT" },
   ],
 }).catch((err) => console.error(err));
